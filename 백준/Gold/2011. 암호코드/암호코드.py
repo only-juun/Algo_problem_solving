@@ -7,10 +7,6 @@ dp = [0] * len(password)
 dp[0] = 1
 dp[1] = 1 if password[1] != 0 else 0
 
-if not dp[1]:
-    print(0)
-    sys.exit()
-
 def j_to_z(num):
     return 10 <= num <= 26
 
