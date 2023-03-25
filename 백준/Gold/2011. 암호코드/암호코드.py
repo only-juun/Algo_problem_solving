@@ -1,5 +1,3 @@
-import sys
-
 MOD = 1000000
 
 password = [0] + list(map(int, input()))
