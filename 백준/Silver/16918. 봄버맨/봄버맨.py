@@ -54,6 +54,3 @@ for i in range(r):
     for j in range(c):
         print("O" if board[i][j] != 0 else ".", end = '')
     print()
-
-
-
