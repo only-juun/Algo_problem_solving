@@ -15,7 +15,10 @@ def is_possible(target):
         else:
             s = arr[i]
             cnt += 1
-    return cnt <= m
+            if cnt > m:
+                return False
+            
+    return True
 
 while left <= right:
     mid = (left + right) // 2
