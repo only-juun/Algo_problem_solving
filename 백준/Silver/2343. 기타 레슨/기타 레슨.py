@@ -16,8 +16,7 @@ def is_possible(target):
             s = arr[i]
             cnt += 1
             if cnt > m:
-                return False
-            
+                return False  
     return True
 
 while left <= right:
