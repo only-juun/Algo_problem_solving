@@ -1,82 +1,71 @@
 from collections import deque
 import sys
 
-input = sys.stdin.readline
+# 상수 정의
+EMPTY, WALL, VIRUS = 0, 1, 2
+DIRECTIONS = [(0, 1), (1, 0), (0, -1), (-1, 0)]
 
+# 입력 처리
 n, m = map(int, input().split())
 grid = [list(map(int, input().split())) for _ in range(n)]
+
+# 초기화
 area = [[0] * m for _ in range(n)]
 visited = [[False] * m for _ in range(n)]
-ans = sys.maxsize
-zeros = []
-virus = []
-selected = []
-walls = 0
+min_virus_spread = sys.maxsize
+empty_spaces, viruses, walls = [], [], 0
 
+# 그리드 분석
 for i in range(n):
     for j in range(m):
-        if grid[i][j] == 0:
-            zeros.append((i, j))
-
-        elif grid[i][j] == 2:
-            virus.append((i, j))
-        
+        if grid[i][j] == EMPTY:
+            empty_spaces.append((i, j))
+        elif grid[i][j] == VIRUS:
+            viruses.append((i, j))
         else:
             walls += 1
 
-def choose(cur):
-    global ans
+def select_walls(cur, selected):
+    global min_virus_spread
     if len(selected) == 3:
-        ans = min(get_safe_area(), ans)
+        min_virus_spread = min(calculate_safe_area(selected), min_virus_spread)
         return
 
-    if cur >= len(zeros):
+    if cur >= len(empty_spaces):
         return 
-    
-    selected.append(zeros[cur])
-    choose(cur + 1)
-    selected.pop()
-    choose(cur + 1)
 
-def get_safe_area():
+    select_walls(cur + 1, selected + [empty_spaces[cur]])
+    select_walls(cur + 1, selected)
+
+def calculate_safe_area(walls):
+    # 초기화
     for i in range(n):
         for j in range(m):
             area[i][j] = grid[i][j]
             visited[i][j] = False
     
-    for x, y in selected:
-        area[x][y] = 1
+    for x, y in walls:
+        area[x][y] = WALL
     
-    q = deque()
-    cnt = 0
-    for i, j in virus:
-        q.append((i, j))
-        visited[i][j] = True
-        cnt += bfs(q)
+    return spread_virus()
 
-    return cnt
+def spread_virus():
+    q = deque(viruses)
+    virus_count = 0
 
-def in_range(x, y):
-    return 0 <= x < n and 0 <= y < m
-
-def can_go(x, y):
-    return in_range(x, y) and not visited[x][y] and area[x][y] == 0
-
-def bfs(q):
-    dxs, dys = [0, 1, 0, -1], [1, 0, -1, 0]
-    cnt = 1
     while q:
         x, y = q.popleft()
+        if not visited[x][y]:
+            visited[x][y] = True
+            virus_count += 1
+            for dx, dy in DIRECTIONS:
+                nx, ny = x + dx, y + dy
+                if 0 <= nx < n and 0 <= ny < m and area[nx][ny] == EMPTY:
+                    q.append((nx, ny))
 
-        for dx, dy in zip(dxs, dys):
-            nx, ny = x + dx, y + dy
-            if can_go(nx, ny):
-                q.append((nx, ny))
-                visited[nx][ny] = True
-                cnt += 1
-         
-    return cnt
+    return virus_count
 
-choose(0)
+select_walls(0, [])
 
-print((n * m) - ans - walls - 3)
+# 결과 출력
+print((n * m) - min_virus_spread - walls - 3)
