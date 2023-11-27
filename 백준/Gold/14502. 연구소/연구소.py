@@ -1,10 +1,13 @@
 from collections import deque
+import sys
+
+input = sys.stdin.readline
 
 n, m = map(int, input().split())
 grid = [list(map(int, input().split())) for _ in range(n)]
 area = [[0] * m for _ in range(n)]
 visited = [[False] * m for _ in range(n)]
-ans = 0
+ans = sys.maxsize
 zeros = []
 virus = []
 selected = []
@@ -15,16 +18,16 @@ for i in range(n):
         if grid[i][j] == 0:
             zeros.append((i, j))
 
-        if grid[i][j] == 2:
+        elif grid[i][j] == 2:
             virus.append((i, j))
         
-        if grid[i][j] == 1:
+        else:
             walls += 1
 
 def choose(cur):
     global ans
     if len(selected) == 3:
-        ans = max(get_safe_area(), ans)
+        ans = min(get_safe_area(), ans)
         return
 
     if cur >= len(zeros):
@@ -51,7 +54,7 @@ def get_safe_area():
         visited[i][j] = True
         cnt += bfs(q)
 
-    return (n * m) - cnt - walls - 3
+    return cnt
 
 def in_range(x, y):
     return 0 <= x < n and 0 <= y < m
@@ -76,4 +79,4 @@ def bfs(q):
 
 choose(0)
 
-print(ans)
+print((n * m) - ans - walls - 3)
