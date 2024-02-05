@@ -1,20 +1,16 @@
+def solveNQueens(n):
+    def backtrack(row, columns, diagonals1, diagonals2):
+        if row == n:
+            return 1
+        count = 0
+        availablePositions = ((1 << n) - 1) & ~(columns | diagonals1 | diagonals2)
+        while availablePositions:
+            position = availablePositions & -availablePositions
+            availablePositions &= availablePositions - 1
+            count += backtrack(row + 1, columns | position, (diagonals1 | position) << 1, (diagonals2 | position) >> 1)
+        return count
+
+    return backtrack(0, 0, 0, 0)
+
 n = int(input())
-ans = 0
-left_diagonal = [0] * (2 * n - 1)  # 주 대각선
-right_diagonal = [0] * (2 * n - 1)  # 부 대각선
-column = [0] * n  # 열
-
-def solve(row):
-    global ans
-    if row == n:
-        ans += 1
-        return
-    for col in range(n):
-        if column[col] or left_diagonal[row + col] or right_diagonal[row - col + n - 1]:
-            continue
-        column[col] = left_diagonal[row + col] = right_diagonal[row - col + n - 1] = 1
-        solve(row + 1)
-        column[col] = left_diagonal[row + col] = right_diagonal[row - col + n - 1] = 0
-
-solve(0)
-print(ans)
+print(solveNQueens(n))
