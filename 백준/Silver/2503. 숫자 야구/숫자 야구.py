@@ -1,9 +1,10 @@
-from itertools import permutations
+import sys
+from itertools import permutations as p
+input = sys.stdin.readline
 
 n = int(input())
 
-arr = [''.join(map(str, perm)) for perm in permutations(range(1, 10), 3)]
-ans = [''.join(map(str, perm)) for perm in permutations(range(1, 10), 3)]
+arr = list(p('123456789', 3))
 
 def get_sb(a, num):
     s, b = 0, 0
@@ -17,10 +18,12 @@ def get_sb(a, num):
 
 for i in range(n):
     num, strike, ball = map(int, input().split())
+    temp = []
     for a in arr:
         x, y = get_sb(a, str(num))
-        if strike != x or ball != y:
-            if a in ans:
-                ans.remove(a)
+        if strike == x and ball == y:
+            temp.append(a)
 
-print(len(ans))
+    arr = temp
+
+print(len(arr))
