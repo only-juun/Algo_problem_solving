@@ -1,10 +1,10 @@
 def is_unique(num):
-    digits = [False] * 10
+    bit_mask = 0
     while num > 0:
         digit = num % 10
-        if digits[digit]:
+        if bit_mask & (1 << digit):
             return False
-        digits[digit] = True
+        bit_mask |= (1 << digit)
         num //= 10
     return True
 
